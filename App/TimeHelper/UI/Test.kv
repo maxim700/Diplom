@@ -1,0 +1,475 @@
+#:kivy 2.1.0
+#:import Factory kivy.factory.Factory
+
+
+<MainScreen>
+    BoxLayout:
+        orientation: "vertical"
+        anchor_x:'right'
+        anchor_y:'top'
+        padding: dp(0), dp(0), dp(0), dp(5)
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        MDTopAppBar:
+            orientation: "horizontal"
+            title: "MDTopAppBar"
+            specific_text_color:  get_color_from_hex("#EDEDED")
+            anchor_title: "left"
+            md_bg_color: get_color_from_hex("#25274D")
+            elevation: 2
+
+            MDIconButton:
+                icon: "language-python"
+                pos_hint: {'center_y': .5}
+
+        BoxLayout:
+            padding: dp(0), dp(10)
+            spacing: dp(5)
+            anchor_y:'top'
+            orientation: "vertical"
+            height: root.height
+
+            DayButton:
+                text: "Button1"
+                id: day0
+                on_release:
+                    root.btn_touch_up("day0")
+
+            DayButton:
+                text: "Button2"
+                id: day1
+                on_release:
+                    root.btn_touch_up("day1")
+
+            DayButton:
+                text: "Button3"
+                id: day2
+                on_release:
+                    root.btn_touch_up("day2")
+
+            DayButton:
+                text: "Button4"
+                id: day3
+                on_release:
+                    root.btn_touch_up("day3")
+
+            DayButton:
+                text: "Button5"
+                id: day4
+                on_release:
+                    root.btn_touch_up("day4")
+
+            DayButton:
+                text: "Button6"
+                id: day5
+                on_release:
+                    root.btn_touch_up("day5")
+
+            DayButton:
+                text: "Button7"
+                id: day6
+                on_release:
+                    root.btn_touch_up("day6")
+
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: 0.1
+            padding: dp(5)
+            spacing: dp(10)
+
+            BoxLayout:
+                size_hint_x: .64
+
+
+            MDFloatingActionButton:
+                size_hint_x: .17
+                icon: "star"
+                md_bg_color: get_color_from_hex("#AAABB8")
+                icon_color: get_color_from_hex("#29648A")
+                pos_hint: {"center_x": .9, "center_y": .5}
+                on_release:
+                    root.form_btn_touch_up("testform.txt")
+
+            MDFloatingActionButton:
+                size_hint_x: .17
+                icon: "plus"
+                md_bg_color: get_color_from_hex("#AAABB8")
+                icon_color: get_color_from_hex("#29648A")
+                pos_hint: {"center_x": .9, "center_y": .5}
+                on_release:
+                    root.add_btn_touch_up()
+
+
+<DayButton>
+    text_color: get_color_from_hex("#25274D")
+    halign: 'left'
+    valign: 'center'
+    md_bg_color: get_color_from_hex("#AAABB8")
+
+    pos_hint: {'center_x': .5}
+    size_hint_x: .98
+    size_hint_y: .5
+
+<Day>:
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        anchor_y:'top'
+        orientation: "vertical"
+        height: root.height
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                id: eslayout
+                size_hint_y: None
+                padding: dp(5), dp(5)
+                spacing: dp(5)
+                anchor_y:'top'
+                orientation: "vertical"
+                height: 0
+                size_hint_x: 1
+
+                Label:
+                    id: L1
+                    text: 'dsadas'
+                    color: get_color_from_hex("#EDEDED")
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    size_hint_y: .05
+
+                BoxLayout:
+                    id: box
+                    padding: dp(5), dp(5)
+                    spacing: dp(5)
+                    anchor_y:'top'
+                    orientation: "vertical"
+                    size_hint_y: 1
+
+
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1
+
+            MDRectangleFlatButton:
+                text: 'Close'
+                text_color: get_color_from_hex("#25274D")
+                md_bg_color: get_color_from_hex("#AAABB8")
+                on_release:
+                    root.close_btn_touch_up()
+            BoxLayout:
+
+
+<EVENT>:
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        anchor_y:'top'
+        orientation: "vertical"
+
+        Label:
+            id: L1
+            text: 'TIME'
+            color: get_color_from_hex("#EDEDED")
+            text_size: self.size
+            halign: 'left'
+            valign: 'center'
+
+
+        GridLayout:
+            id: tagbox
+            padding: dp(5), dp(5)
+            spacing: dp(10)
+            anchor_y:'top'
+            cols: 3
+            orientation: "lr-tb"
+            col_force_default: True
+            col_default_width: '70dp'
+            row_force_default: True
+            row_default_height: '25dp'
+
+<TAG>:
+    text: ""
+    color: get_color_from_hex("#EDEDED")
+    size_hint: None, None
+    size: 70, 25
+    anchor_y:'top'
+    anchor_x:'left'
+    canvas.before:
+        Color:
+            rgba: get_color_from_hex("#29648A")
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10,]
+
+
+
+<NEWEVENT>:
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+
+
+        BoxLayout:
+            size_hint_y: .10
+            orientation: "vertical"
+
+
+            Label:
+                text: "name"
+                color: get_color_from_hex("#EDEDED")
+                text_size: self.size
+                halign: 'left'
+                valign: 'center'
+
+            TextInput:
+                id: name
+                multiline: False
+                text_size: self.size
+                cursor_color: get_color_from_hex("#25274D")
+                foreground_color: get_color_from_hex("#25274D")
+                size_hint_y: None
+                height: sp(32)
+                background_color: get_color_from_hex("#EDEDED")
+
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(5)
+            size_hint_y: 0.40
+            Label:
+                text: "TAGS:"
+                text_size: self.size
+                color: get_color_from_hex("#EDEDED")
+                halign: 'left'
+                valign: 'center'
+                size_hint_y: 0.2
+            GridLayout:
+                id: tagbox
+                cols: 3
+                spacing: dp(5)
+                orientation: "lr-tb"
+
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(5)
+            padding: dp(5)
+            size_hint_y: .20
+
+
+
+            MDRectangleFlatButton:
+                text: "Time"
+                id: time
+                text_color: get_color_from_hex("#EDEDED")
+                md_bg_color: get_color_from_hex("#AAABB8")
+                size_hint_y: .45
+                size_hint_x: .30
+                on_release:
+                    root.set_time()
+
+            BoxLayout:
+                size_hint_y: .45
+                size_hint_x: 1
+                MDRectangleFlatButton:
+                    text: "Date"
+                    id: date
+                    text_color: get_color_from_hex("#EDEDED")
+                    md_bg_color: get_color_from_hex("#AAABB8")
+                    size_hint_x: .45
+                    size_hint_y: 1
+                    on_release:
+                        root.set_date()
+
+                BoxLayout:
+                    size_hint_x: .85
+                MDFloatingActionButton:
+                    size_hint_x: .2
+                    size_hint_y: .9
+                    icon: "plus"
+                    md_bg_color: get_color_from_hex("#AAABB8")
+                    icon_color: get_color_from_hex("#29648A")
+                    pos_hint: {"center_x": .9, "center_y": .5}
+                    on_release:
+                        root.rec_btn_touch_up()
+
+        BoxLayout:
+            size_hint_y: .30
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1
+
+            MDRectangleFlatButton:
+                text: 'Close'
+                text_color: get_color_from_hex("#25274D")
+                md_bg_color: get_color_from_hex("#AAABB8")
+                on_release:
+                    root.close_btn_touch_up()
+            BoxLayout:
+            MDRectangleFlatButton:
+                text: 'OK'
+                text_color: get_color_from_hex("#25274D")
+                md_bg_color: get_color_from_hex("#AAABB8")
+                on_release:
+                    root.ok_btn_touch_up()
+
+<CheckItem>
+    adaptive_height: True
+    md_bg_color: get_color_from_hex("#AAABB8")
+
+    MDCheckbox:
+        id:check
+        size_hint: None, None
+        color_active: get_color_from_hex("#29648A")
+        size: "48dp", "48dp"
+
+    MDLabel:
+        text: root.text
+        adaptive_height: True
+        color: get_color_from_hex("#EDEDED")
+        pos_hint: {"center_y": .5}
+
+<GCheckItem>
+    adaptive_height: True
+    md_bg_color: get_color_from_hex("#AAABB8")
+
+    MDCheckbox:
+        id:check
+        group: root.group
+        size_hint: None, None
+        color_active: get_color_from_hex("#29648A")
+        size: "48dp", "48dp"
+
+    MDLabel:
+        text: root.text
+        adaptive_height: True
+        color: get_color_from_hex("#EDEDED")
+        pos_hint: {"center_y": .5}
+
+
+<Form>
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                id: questionsbox
+                size_hint_y: None
+                spacing: dp(5)
+                anchor_y:'top'
+                orientation: "vertical"
+                height: 0
+                size_hint_x: 1
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1
+            padding: dp(5)
+
+            MDRectangleFlatButton:
+                text: 'Close'
+                text_color: get_color_from_hex("#25274D")
+                md_bg_color: get_color_from_hex("#AAABB8")
+                on_release:
+                    root.close_btn_touch_up()
+            BoxLayout:
+
+
+
+<SimpleQuestion>
+    orientation: "vertical"
+    padding: dp(5), dp(10)
+    spacing: dp(5)
+
+    MDLabel:
+        text: root.text
+        color: get_color_from_hex("#EDEDED")
+        halign: 'left'
+        valign: 'center'
+        size_hint_y: 0.4
+
+    BoxLayout:
+        orientation: "horizontal"
+        GCheckItem:
+            text: "ДА"
+            group: root.group
+        GCheckItem:
+            text: "НЕТ"
+            group: root.group
+
+<RateQuestion>
+    orientation: "vertical"
+    padding: dp(5), dp(5)
+    spacing: dp(5)
+
+    MDLabel:
+        text: root.text
+        color: get_color_from_hex("#EDEDED")
+        halign: 'left'
+        valign: 'center'
+        size_hint_y: 0.4
+
+    BoxLayout:
+        orientation: "horizontal"
+
+        MDLabel:
+            text: root.LL
+            color: get_color_from_hex("#EDEDED")
+            halign: 'right'
+            valign: 'center'
+            size_hint_x: 0.2
+
+        MDSlider
+            hint: True
+            color: get_color_from_hex("#25274D")
+            hint_bg_color: get_color_from_hex("#25274D")
+            hint_text_color: get_color_from_hex("#EDEDED")
+            thumb_color_active: get_color_from_hex("#25274D")
+            thumb_color_inactive: get_color_from_hex("#AAABB8")
+            hint_radius: [6, 0, 6, 0]
+            min:0
+            max:10
+            size_hint_x: 0.6
+
+        MDLabel:
+            text: root.RL
+            color: get_color_from_hex("#EDEDED")
+            halign: 'left'
+            valign: 'center'
+            size_hint_x: 0.2

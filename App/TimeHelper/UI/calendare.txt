@@ -1,0 +1,8 @@
+17.05.2023,21:30,name:test1,duration:100,Friend:True,time:1290
+17.05.2023,20:30,name:test2,Activ:True,Friends:True,Road:True,duration:45,time:1230
+17.05.2023,15:40,name:test2,Activ:True,Friends:True,Road:True,duration:45,time:940
+17.05.2023,22:30,name:test2,Activ:True,Friends:True,Road:True,duration:45,time:1350
+17.05.2023,22:30,name:test3,duration:30,Relax:True,time:1350
+17.05.2023,22:31,name:test2,duration:30,Friend:True,Road:True,time:1351
+17.05.2023,22:00,name:test2,Activ:True,Friends:True,Road:True,duration:45,time:1320
+17.05.2023,12:27,name:test2,Activ:True,Friends:True,Road:True,duration:45,time:747
