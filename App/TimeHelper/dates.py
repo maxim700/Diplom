@@ -24,5 +24,5 @@ def days():
 def today_range():
     today = dt.datetime.today()
     start = today + dt.timedelta(-3)
-    stop = today + dt.timedelta(4)
+    stop = today + dt.timedelta(3)
     return (start, stop)

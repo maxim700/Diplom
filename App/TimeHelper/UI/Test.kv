@@ -25,8 +25,12 @@
             elevation: 2
 
             MDIconButton:
-                icon: "language-python"
+                icon: "account-circle"
+                theme_text_color: "Custom"
+                text_color: get_color_from_hex("#EDEDED")
                 pos_hint: {'center_y': .5}
+                on_release:
+                    root.profile_btn_touch_up()
 
         BoxLayout:
             padding: dp(0), dp(10)
@@ -39,43 +43,43 @@
                 text: "Button1"
                 id: day0
                 on_release:
-                    root.btn_touch_up("day0")
+                    root.day_btn_touch_up("day0")
 
             DayButton:
                 text: "Button2"
                 id: day1
                 on_release:
-                    root.btn_touch_up("day1")
+                    root.day_btn_touch_up("day1")
 
             DayButton:
                 text: "Button3"
                 id: day2
                 on_release:
-                    root.btn_touch_up("day2")
+                    root.day_btn_touch_up("day2")
 
             DayButton:
                 text: "Button4"
                 id: day3
                 on_release:
-                    root.btn_touch_up("day3")
+                    root.day_btn_touch_up("day3")
 
             DayButton:
                 text: "Button5"
                 id: day4
                 on_release:
-                    root.btn_touch_up("day4")
+                    root.day_btn_touch_up("day4")
 
             DayButton:
                 text: "Button6"
                 id: day5
                 on_release:
-                    root.btn_touch_up("day5")
+                    root.day_btn_touch_up("day5")
 
             DayButton:
                 text: "Button7"
                 id: day6
                 on_release:
-                    root.btn_touch_up("day6")
+                    root.day_btn_touch_up("day6")
 
 
         BoxLayout:
@@ -84,13 +88,9 @@
             padding: dp(5)
             spacing: dp(10)
 
-            BoxLayout:
-                size_hint_x: .64
-
-
             MDFloatingActionButton:
-                size_hint_x: .17
-                icon: "star"
+                size_hint_x: .20
+                icon: "check-decagram"
                 md_bg_color: get_color_from_hex("#AAABB8")
                 icon_color: get_color_from_hex("#29648A")
                 pos_hint: {"center_x": .9, "center_y": .5}
@@ -98,7 +98,25 @@
                     root.form_btn_touch_up("testform.txt")
 
             MDFloatingActionButton:
-                size_hint_x: .17
+                size_hint_x: .20
+                icon: "calendar"
+                md_bg_color: get_color_from_hex("#AAABB8")
+                icon_color: get_color_from_hex("#29648A")
+                pos_hint: {"center_x": .9, "center_y": .5}
+                on_release:
+                    root.calendare_btn_toch_up()
+
+            MDFloatingActionButton:
+                size_hint_x: .20
+                icon: "star"
+                md_bg_color: get_color_from_hex("#AAABB8")
+                icon_color: get_color_from_hex("#29648A")
+                pos_hint: {"center_x": .9, "center_y": .5}
+                on_release:
+                    root.rate_btn_touch_up()
+
+            MDFloatingActionButton:
+                size_hint_x: .20
                 icon: "plus"
                 md_bg_color: get_color_from_hex("#AAABB8")
                 icon_color: get_color_from_hex("#29648A")
@@ -151,7 +169,7 @@
                     text_size: self.size
                     halign: 'left'
                     valign: 'center'
-                    size_hint_y: .05
+                    size_hint_y: .1
 
                 BoxLayout:
                     id: box
@@ -402,13 +420,17 @@
             size_hint_y: .1
             padding: dp(5)
 
-            MDRectangleFlatButton:
-                text: 'Close'
+            MDRaisedButton:
+                text: root.ButtonText
                 text_color: get_color_from_hex("#25274D")
+                halign: 'center'
+                valign: 'center'
                 md_bg_color: get_color_from_hex("#AAABB8")
+                pos_hint: {'center_x': .5}
+                size_hint_x: .98
+                size_hint_y: 1
                 on_release:
-                    root.close_btn_touch_up()
-            BoxLayout:
+                    root.close_btn_touch_up(root.ResultPath)
 
 
 
@@ -427,6 +449,7 @@
     BoxLayout:
         orientation: "horizontal"
         GCheckItem:
+            id: check
             text: "ДА"
             group: root.group
         GCheckItem:
@@ -456,6 +479,7 @@
             size_hint_x: 0.2
 
         MDSlider
+            id: rate
             hint: True
             color: get_color_from_hex("#25274D")
             hint_bg_color: get_color_from_hex("#25274D")
@@ -466,6 +490,7 @@
             min:0
             max:10
             size_hint_x: 0.6
+            step: 1
 
         MDLabel:
             text: root.RL
@@ -473,3 +498,151 @@
             halign: 'left'
             valign: 'center'
             size_hint_x: 0.2
+
+
+<Reg>
+    BoxLayout:
+        padding: dp(0), dp(10)
+        spacing: dp(5)
+        anchor_y:'top'
+        orientation: "vertical"
+        height: root.height
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        MDLabel:
+            text: root.LabelText
+            color: get_color_from_hex("#EDEDED")
+            halign: 'center'
+            valign: 'center'
+
+
+        MDRaisedButton:
+            text: root.ButtonText
+            text_color: get_color_from_hex("#25274D")
+            halign: 'center'
+            valign: 'center'
+            md_bg_color: get_color_from_hex("#AAABB8")
+            pos_hint: {'center_x': .5}
+            size_hint_x: .98
+            size_hint_y: .1
+            on_release:
+                root.reg_btn_touch_up()
+
+
+<Profile>
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        MDLabel:
+            text: root.ProfileHead
+            color: get_color_from_hex("#EDEDED")
+            halign: 'center'
+            valign: 'center'
+            size_hint_y: 0.2
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                id: skillsbox
+                padding: dp(0), dp(10)
+                spacing: dp(5)
+                anchor_y:'top'
+                orientation: "vertical"
+                size_hint_y: None
+                height: 0
+        BoxLayout:
+            padding: dp(5), dp(5)
+            spacing: dp(5)
+            orientation: "horizontal"
+            size_hint_y: 0.1
+            MDRaisedButton:
+                text: root.ButtonText
+                text_color: get_color_from_hex("#25274D")
+                halign: 'center'
+                valign: 'center'
+                md_bg_color: get_color_from_hex("#AAABB8")
+                pos_hint: {'center_x': .5}
+                size_hint_x: .98
+                on_release:
+                    root.close_btn_touch_up()
+
+
+<SkillButton>
+    icon: root.icon
+    text: root.text
+    text_color: get_color_from_hex("#EDEDED")
+    icon_color: get_color_from_hex("#EDEDED")
+    halign: 'left'
+    valign: 'center'
+    md_bg_color: get_color_from_hex("#AAABB8")
+    pos_hint: {'center_x': .5}
+    size_hint_x: .98
+    size_hint_y: .2
+
+<RateScreen>
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex("#464866")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        MDLabel:
+            text: root.Header
+            color: get_color_from_hex("#EDEDED")
+            halign: 'left'
+            valign: 'center'
+            size_hint_y: 0.1
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                id: ratebox
+                padding: dp(0), dp(10)
+                spacing: dp(5)
+                anchor_y:'top'
+                orientation: "vertical"
+                size_hint_y: None
+                height: 0
+        BoxLayout:
+            padding: dp(5), dp(5)
+            spacing: dp(5)
+            orientation: "horizontal"
+            size_hint_y: 0.1
+            MDRaisedButton:
+                text: root.ButtonText
+                text_color: get_color_from_hex("#25274D")
+                halign: 'center'
+                valign: 'center'
+                md_bg_color: get_color_from_hex("#AAABB8")
+                pos_hint: {'center_x': .5}
+                size_hint_x: .98
+                on_release:
+                    root.close_btn_touch_up()
+
+
+<RateButton>
+    text: root.text
+    text_color: get_color_from_hex("#EDEDED")
+    halign: 'left'
+    valign: 'center'
+    md_bg_color: get_color_from_hex("#AAABB8")
+    pos_hint: {'center_x': .5}
+    size_hint_x: .98
+    size_hint_y: .2

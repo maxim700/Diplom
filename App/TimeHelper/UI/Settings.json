@@ -1,0 +1,16 @@
+{
+  "icons": {
+    "people": "account-group",
+    "noize": "party-popper",
+    "job": "briefcase",
+    "sleep": "sleep",
+    "activ": "run",
+    "road": "road-variant",
+    "multiwork": "file-tree",
+    "stress": "flash-alert",
+    "responsibility": "shield-alert",
+    "plan": "map-check",
+    "motivation": "star-shooting",
+    "hobby": "palette"
+  }
+}

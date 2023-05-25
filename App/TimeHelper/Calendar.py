@@ -79,11 +79,11 @@ class calendar:
             e = Event.event(line[0],line[1],d)
             self.dates[line[0]][line[1]][line[2]] = e
         file.close()
-        ######Sort#######
+        self.sort()
+
+    def sort(self):
         for date in self.dates:
             self.dates[date] = dict(sorted(self.dates[date].items(), key = lambda x: x[0]))
-
-
 
     def get_period(self, start, end):
         period = []
@@ -122,10 +122,10 @@ class calendar:
                             else:
                                 result[((tm+t) // 45) + k] = event
                         i += 1
+                        #todo next day
                         if i==len(names):
                             break
-                    else:
-                        result.append(None)
+
         return result
 
 

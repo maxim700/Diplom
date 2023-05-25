@@ -6,13 +6,14 @@ from ExpBank import expline, ExpBank
 from keras import Model, Sequential
 from keras.layers import Dense, Embedding, Reshape
 from keras.optimizers import Adam
+from TAGS import TAGS
 
 
 class Agent:
     def __init__(self, enviroment, optimizer, bank, key):
 
         # Initialize atributes
-        self._state_size = 96#len(enviroment)#Сюда подается количество состояний среды (как их получить)
+        self._state_size = 225*len(TAGS) #24*60/45*7 + 1 * TAGS
         self._action_size = 3 #Количество дней, на которое дается рекомендация
         self._optimizer = optimizer
 
@@ -48,26 +49,65 @@ class Agent:
     def alighn_target_model(self):
         self.target_network.set_weights(self.q_network.get_weights())
 
+    def normal(self, state):
+        norm = np.zeros(len(state)*len(TAGS))
+        pos = 0
+        for i,line in enumerate(state):
+            if line == None:
+                for tag in TAGS:
+                    norm[pos] = 0
+                    pos += 1
+            else:
+                print(line)
+                for tag in TAGS:
+                    if tag in line:
+                        norm[pos] = 1
+                    else:
+                        norm[pos] = 0
+                    pos += 1
+                #norm[i] = np.array([1 if tag in line else 0 for tag in TAGS])
+        return norm
+
+    def balans_action(self, state):
+        statepart = np.array_split(self.normal(state[:-1*len(TAGS)]),7)[4:]
+        return np.argmin([np.sum(i) for i in statepart])#Где-то есть косяк в подсчетах todo поправить
+
     #В функции выбирается, делать действие рандомно или воспользоваться опытом
     #В нашем случае нужно будет воспользоваться опытом, если он есть
     #Если похожего нету, то мы делаем действие псевдорандомно, то бишь стремим его к балансу
     def act(self, state):
-        if self.bank.find(self.key, state, self.epsilon) is None:
-            return np.random.randint(3)#pass # todo действие по алгоритму # регрессионная модель
+        exp = self.bank.find(self.key, state, self.epsilon)
+        print(exp)
+        if exp is None:
+            action = 0#action = self.balans_action(state)
+            newexp = expline(key = self.key,
+                              data = state,
+                              action = action,
+                              priority = 0,
+                              cost = 0
+                              )
+            self.bank.add_exp(newexp)
+            return (action, newexp.id)
+        action = np.argmax(self.q_network.predict(self.normal(state))[0])
+        newexp = expline(key=self.key,
+                          data=state,
+                          action=action,
+                          priority=expline.priority,
+                          cost=0
+                          )
+        self.Bank.add_exp(newexp)
+        expline.priority += 0.05
+        return (action, newexp.id)
 
-        q_values = self.q_network.predict(state)
-        return np.argmax(q_values[0])
 
-
-    def retrain(self, user_reward):
-        minibatch = self.bank.get_exp(self.key)
-        if not(minibatch is None):
-            for exp in minibatch:
-                key, priority, state, reward, action = exp.tuple()
-
-                target = self.q_network.predict(state)
-                target[0][action] = reward + user_reward*0.1
-                self.q_network.fit(state, target, epochs=1, verbose=0)
-
-                exp.priority += np.abs(user_reward - reward)
+    def retrain(self,expid, user_reward):
+        exp = self.bank.get(self.key,expid)
+        key, state, action, priority, reward = exp.tuple()
+        print(state)
+        target = self.q_network.predict(self.normal(state))
+        print("########TARGET############")
+        print(target)
+        target[0][action] = reward + user_reward*0.1
+        self.q_network.fit(state, target, epochs=1, verbose=0)
+        exp.priority += np.abs(user_reward - reward)
 

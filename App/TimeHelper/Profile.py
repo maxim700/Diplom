@@ -16,7 +16,7 @@ class prof:
             "road": None,
             "multiwork": None,
             "stress": None,
-            "resp": None,
+            "responsibility": None,
             "plan": None,
             "motivation": None,
             "hobby": None
@@ -41,11 +41,16 @@ class prof:
         file.close()
 
     def load(self):
-        file = open("profsave.txt", 'r')
-        for i, skill in enumerate(self.skills):
-            s = file.readline().split(',')
-            self.skills[s[0]] = float(s[1])
-        file.close()
+        try:
+            file = open("profsave.txt", 'r')
+            for i, skill in enumerate(self.skills):
+                s = file.readline().split(',')
+                self.skills[s[0]] = float(s[1])
+            file.close()
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def key(self):
         res = ""
