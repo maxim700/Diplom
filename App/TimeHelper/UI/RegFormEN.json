@@ -1,0 +1,16 @@
+{
+  "form": [
+    [ "R", "Your attitude to people", "A very narrow circle of communication", "I am glad to literally every person" ],
+    [ "R", "Your attitude to noisy companies", "I love loneliness", "I love noisy parties" ],
+    [ "R", "Your attitude to work", "Hatred of work", "Dream job" ],
+    [ "R", "Your attitude to sleep", "12 hours of sleep are vital", "I don't sleep peacefully for more than a day" ],
+    [ "R", "Your attitude to activity", "I prefer to lie in bed all day", "I can't sit for 5 minutes" ],
+    [ "R", "Your attitude to the road", "Very tired", "Relaxing" ],
+    [ "R", "How much are you multitasking?", "0", "10" ],
+    [ "R", "How stress-resistant are you", "0", "10" ],
+    [ "R", "How often do you finish things", "Very rarely", "Always" ],
+    [ "R", "Your attitude to planning", "I always improvise", "Life is planned for several years ahead" ],
+    [ "R", "How much do you depend on motivation", "Even the simplest things need powerful motivation", "I can work with minimal motivation and motivate others" ],
+    [ "R", "How much time do you spend on hobbies", "Very little", "Most of the day" ]
+  ]
+}

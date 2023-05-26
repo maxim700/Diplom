@@ -1,5 +1,4 @@
-#Библиотека для гугл аккаунта + вопрос на разрешение!!!!
-
+import json
 class prof:
 
     def __init__(self):
@@ -35,17 +34,14 @@ class prof:
             self.set_skills(skills)
 
     def save(self):
-        file = open("profsave.txt", 'w')
-        for i,skill in enumerate(self.skills):
-            file.write(f"{skill},{self.skills[skill]}\n")
+        with open("profile.json", "w") as file:
+            json.dump(self.skills, file)
         file.close()
 
     def load(self):
         try:
-            file = open("profsave.txt", 'r')
-            for i, skill in enumerate(self.skills):
-                s = file.readline().split(',')
-                self.skills[s[0]] = float(s[1])
+            with open("profile.json", "r") as file:
+                self.skills = json.load(file)
             file.close()
             return True
         except Exception as e:
@@ -55,7 +51,8 @@ class prof:
     def key(self):
         res = ""
         for skill in self.skills:
-            match skill:
+            print(self.skills[skill])
+            match self.skills[skill]:
                 case 1 | 2:
                     res += "A"
                 case 3 | 4 | 5:

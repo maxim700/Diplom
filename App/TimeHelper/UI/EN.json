@@ -1,0 +1,63 @@
+{
+  "Profile": {
+    "people": [ "Attitude to people", "Parameter shows how well you feel among people" ],
+    "noize": [ "Attitude to noisy companies", "Parameter shows how well you feel at noisy events" ],
+    "job": [ "Attitude to work", "Parameter shows how satisfied you are with your work" ],
+    "sleep": [ "Attitude to sleep", "Parameter shows how much sleep you need" ],
+    "activ": [ "Attitude to activity", "Parameter shows above attitude to active recreation" ],
+    "road": [ "Attitude to the road", "Parameter shows how well you feel when you go somewhere" ],
+    "multiwork": [ "Multitasking", "Parameter shows how many tasks you can perform at the same time" ],
+    "stress": [ "Attitude to stressful situations", "The parameter shows how stressful you are" ],
+    "responsibility": [ "Responsiveness", "The parameter shows how much you are responsible" ],
+    "plan": [ "Attitude to planning", "The parameter shows how the degree of planning of your life" ],
+    "motivation": [ "Motivation", "Parameter shows how important motivation is for you" ],
+    "hobby": [ "Attitude to hobbies", "Parameter shows how much time you allocate for hobbies" ],
+    "Header": "Your profile"
+  },
+  "Common": {
+    "Close": "Close",
+    "Open": "Open",
+    "Save": "Save",
+    "Ok": "OK",
+    "Yes": "Yes",
+    "No": "No",
+    "Name": "Enter a name:"
+
+  },
+  "Theme": {
+    "Dark": "Dark theme",
+    "Light": "Light theme"
+  },
+  "Settings": {
+    "Header": "Settings"
+  },
+  "MainScreen": {
+    "Header": "Smart Diary",
+    "Days": [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Resurrection" ]
+  },
+  "NewEvent": {
+    "Name": "Enter event name:",
+    "Tags": "Select appropriate tags:",
+    "Time": "Time",
+    "Date": "Date",
+    "TagName": {
+      "Friends": "Friends",
+      "Road": "Road",
+      "Activ": "Activity",
+      "Relax": "Rest"
+    }
+  },
+  "Reg": {
+    "Header": "Welcome",
+    "Start": "Register"
+  },
+  "TaskScreen": {
+    "Header": "Your tasks"
+  },
+  "NewTaskScreen": {
+    "Name": "Enter the name of the task",
+    "Add": "Add"
+  }
+
+
+}

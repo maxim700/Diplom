@@ -12,8 +12,7 @@ def drange(start, stop):#(d, m, y)
     res.append(end)
     return res
 
-def days():
-    wdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пяница", "Суббота", "Восресение"]
+def days(wdays):
     today = dt.datetime.today()
     res = []
     for i in range(-3,4):

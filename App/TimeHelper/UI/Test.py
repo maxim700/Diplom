@@ -4,12 +4,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDRectangleFlatButton, MDRaisedButton, MDRectangleFlatIconButton
+from kivymd.uix.button import MDRectangleFlatButton, MDRaisedButton, MDRectangleFlatIconButton, MDFillRoundFlatIconButton
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import StringProperty, NumericProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty
 from kivymd.uix.pickers.timepicker.timepicker import MDTimePicker
 from  kivymd.uix.pickers.datepicker.datepicker import MDDatePicker
 
@@ -19,19 +19,34 @@ import datetime as dt
 import TAGS
 from threading import Thread
 
-DAYS = 7
-TAGH = 25
-
 class MainScreen(Screen):
+    AppName = StringProperty()
 
-    def __init__(self, name, Logic, Settings):
+    def __init__(self, name, APP):
         super(MainScreen, self).__init__(name = name)
-        self.Logic = Logic
-        self.Settings = Settings
-        d = days()
-        for i in range(DAYS):
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+        self.FC = APP.form_constructor
+
+    def show(self):
+        self.AppName = self.APP.Lang["MainScreen"]["Header"]
+        d = days(self.APP.Lang["MainScreen"]["Days"])
+        for i in range(7):
             s = f"day{i}"
             self.ids[s].text = d[i]
+        self.manager.current = "MainScreen"
+
+    def fill_days(self,D,events):
+        for event in events:
+            e = EVENT()
+            e.ids["L1"].text = f"{event[0]} {event[1]}:"
+            for tag in event[2]:
+                e.ids["tagbox"].add_widget(TAG(text=tag))
+
+            e.ids['tagbox'].add_widget(Widget())
+            D.ids['box'].add_widget(e)
+        D.ids['eslayout'].height = len(events) * 120
 
     def day_btn_touch_up(self,id):
         print(f"Touch Up {id}")
@@ -42,48 +57,31 @@ class MainScreen(Screen):
         events = self.Logic.get_day(self.ids[id].text.split()[1])
         if not(events is None):
             print(len(events))
-            for event in events:
-                e = EVENT()
-                e.ids["L1"].text = f"{event[0]} {event[1]}:"
-                for tag in event[2]:
-                    e.ids["tagbox"].add_widget(TAG(text = tag))
-
-                e.ids['tagbox'].add_widget(Widget())
-                D.ids['box'].add_widget(e)
-            print('height')
-            print(D.ids['eslayout'].height)
-            D.ids['eslayout'].height = len(events)*(TAGH+5)*4
-            print(D.ids['eslayout'].height)
-
+            self.fill_days(D,events)
         self.manager.current = "Day"
 
     def add_btn_touch_up(self):
-
         E = self.manager.get_screen("NEWEVENT")
-        for tag in TAGS.TAGS:
-            E.ids["tagbox"].add_widget(CheckItem(text = tag, id = tag))
-
-        self.manager.current = "NEWEVENT"
+        E.show()
 
     def rate_btn_touch_up(self):
         RS = self.manager.get_screen("RateScreen")
-        NR = self.Logic.get_needrate()
-        for i in NR.keys():
-            RS.ids["ratebox"].add_widget(RateButton(text = i))
-            RS.ids['ratebox'].height += 60
-        self.manager.current = "RateScreen"
+        RS.show()
 
 
     def profile_btn_touch_up(self):
         P = self.manager.get_screen("Profile")
-        skills = self.Logic.get_skills()
-        for skill in skills.keys():
-            P.ids['skillsbox'].add_widget(SkillButton(text = str(skills[skill]), icon = self.Settings["icons"][skill]))
-            P.ids['skillsbox'].height +=60
-        self.manager.current = "Profile"
+        P.show()
 
     def on_save_date(self, instance, value, date_range):
-        print(value)
+        date = value.strftime('%d.%m.%Y')
+        D = self.manager.get_screen("Day")
+        D.ids['L1'].text = date
+        events = self.Logic.get_day(date)
+        if not (events is None):
+            print(len(events))
+            self.fill_days(D,events)
+        self.manager.current = "Day"
 
     def calendare_btn_toch_up(self):
         today = dt.date.today()
@@ -91,37 +89,38 @@ class MainScreen(Screen):
         date_dialog.bind(on_save=self.on_save_date)
         date_dialog.open()
 
+    def Task_btn_toch_up(self):
+        T = self.manager.get_screen("TaskScreen")
+        T.show()
 
     def BGNight(self):
         pass
 
-class SkillButton(MDRectangleFlatIconButton):
-    text = StringProperty()
-    icon = StringProperty()
-
 class DayButton(MDRaisedButton):
-        pass
+    pass
 
 class EVENT(BoxLayout):
     pass
 
 class Form(Screen):
     ButtonText = StringProperty("Завершить")
-    ResultPath = StringProperty("Завершить")
+    ResultPath = StringProperty()
 
-    def __init__(self,name,Logic,Settings):
+    def __init__(self,name,APP):
         super(Form, self).__init__(name= name)
-        self.Logic = Logic
-        self.Settings = Settings
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+        self.otherdata = None
+        self.BackScreen = "MainScreen"
 
     def close_btn_touch_up(self,ResultPath):
         rate = []
-        self.manager.current = "MainScreen"
         box = self.ids['questionsbox']
         childs = [i for i in box.children]
         for i in childs:
             if i is SimpleQuestion:
-                if i.ids['check'].active:
+                if i.ids["check"].active:
                     rate.append(1)
                 else:
                     rate.append(0)
@@ -130,12 +129,20 @@ class Form(Screen):
             box.remove_widget(i)
         box.height = 0
         self.Logic.set_LastForm(rate)
-        self.Logic.use_LastForm(ResultPath)
+        self.Logic.use_LastForm(ResultPath, self.otherdata)
+        self.otherdata = None
+        if self.BackScreen != "MainScreen":
+            SC = self.manager.get_screen(self.BackScreen)
+            self.BackScreen = "MainScreen"
+            SC.close_btn_touch_up()
+            SC.show()
 
 
 class SimpleQuestion(BoxLayout):
     text = StringProperty()
     group = StringProperty()
+    Yes = StringProperty()
+    No = StringProperty()
 
 class RateQuestion(BoxLayout):
     text = StringProperty()
@@ -147,20 +154,23 @@ class RateQuestion(BoxLayout):
 
 class Day(Screen):
 
-    def __init__(self,name,Logic,Settings):
+    def __init__(self,name, APP):
         super(Day, self).__init__(name= name)
-        self.Logic = Logic
-        self.Settings = Settings
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
 
     def rename(self):
         print(self.ids)
 
     def close_btn_touch_up(self):
-        self.manager.current = "MainScreen"
         box = self.ids['box']
         childs = [i for i in box.children]
         for i in childs:
             box.remove_widget(i)
+        MS = self.manager.get_screen("MainScreen")
+        MS.show()
+
 
 
 
@@ -168,11 +178,30 @@ class TAG(Label):
     pass
 
 class NEWEVENT(Screen):
+    Name = StringProperty()
+    Tags = StringProperty()
+    Time = StringProperty()
+    Date = StringProperty()
+    OkButton = StringProperty()
+    CloseButton = StringProperty()
 
-    def __init__(self,name,Logic,Settings):
+
+    def __init__(self,name,APP):
         super(NEWEVENT, self).__init__(name= name)
-        self.Logic = Logic
-        self.Settings = Settings
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+    def show(self):
+        self.Name = self.APP.Lang["NewEvent"]["Name"]
+        self.Tags = self.APP.Lang["NewEvent"]["Tags"]
+        self.Time = self.APP.Lang["NewEvent"]["Time"]
+        self.Date = self.APP.Lang["NewEvent"]["Date"]
+        self.CloseButton = self.APP.Lang["Common"]["Close"]
+        self.OkButton = self.APP.Lang["Common"]["Ok"]
+        for tag in TAGS.TAGS:
+            self.ids["tagbox"].add_widget(CheckItem(text = self.APP.Lang["NewEvent"]["TagName"][tag], id = tag))
+        self.manager.current = "NEWEVENT"
 
     def set_time(self):
         time_dialog = MDTimePicker()
@@ -208,14 +237,14 @@ class NEWEVENT(Screen):
         event = []
         childrens = [self.ids['tagbox'].children[i] for i in range(len(TAGS.TAGS))]
         for child in childrens:
-             if child.ids['check'].active:
+             if child.ids["check"].active:
                  event.append(child.id)
+        print("#######EVENT###########")
         print(event)
         date = self.Logic.recomendation(event)
         self.ids["date"].text = date.strftime('%d.%m.%Y')
 
     def close_btn_touch_up(self):
-        self.manager.current = "MainScreen"
         box = self.ids['tagbox']
         childs = [i for i in box.children]
         for i in childs:
@@ -223,6 +252,8 @@ class NEWEVENT(Screen):
         self.ids['name'].text = ""
         self.ids['time'].text = "Time"
         self.ids['date'].text = "Date"
+        MS = self.manager.get_screen("MainScreen")
+        MS.show()
 
     def ok_btn_touch_up(self):
         tags = [self.ids['tagbox'].children[i].id for i in range(len(TAGS.TAGS)) if self.ids['tagbox'].children[i].ids['check'].active]
@@ -237,71 +268,345 @@ class NEWEVENT(Screen):
 class GCheckItem(MDBoxLayout):
     text = StringProperty()
     group = StringProperty()
+    checked = BooleanProperty(False)
+
 
 class CheckItem(MDBoxLayout):
     text = StringProperty()
+    checked = BooleanProperty(False)
 
 class Profile(Screen):
-    ProfileHead = StringProperty("Ваш профиль")
-    ButtonText =  StringProperty("Закрыть")
+    ProfileHead = StringProperty()
+    ButtonText =  StringProperty()
+    LangButton = StringProperty()
+    Theme = StringProperty()
 
-    def __init__(self, name, Logic, Settings):
+
+    def __init__(self, name, APP):
         super(Profile, self).__init__(name=name)
-        self.Logic = Logic
-        self.Settings = Settings
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+    def show(self):
+        self.ProfileHead = self.APP.Lang["Profile"]["Header"]
+        self.LangButton = self.Settings["Lang"]
+        self.ButtonText = self.APP.Lang["Common"]["Close"]
+        if self.Settings["Theme"]=="Dark":
+            self.Theme = "weather-night"
+        else:
+            self.Theme = "white-balance-sunny"
+        skills = self.Logic.get_skills()
+        for skill in skills.keys():
+            self.ids['skillsbox'].add_widget(SkillButton(text=str(skills[skill]), icon=self.Settings["icons"][skill], skill = skill, sc = self))
+            self.ids['skillsbox'].height += 30
+        self.manager.current = "Profile"
+
+    def settings_btn_touch_up(self):
+        SS = self.manager.get_screen("SettingScreen")
+        SS.show()
 
     def close_btn_touch_up(self):
-        self.manager.current = "MainScreen"
         box = self.ids['skillsbox']
         childs = [i for i in box.children]
         for i in childs:
             box.remove_widget(i)
+        box.height = 0
+        MS = self.manager.get_screen("MainScreen")
+        MS.show()
+
+
+class SkillButton(MDFillRoundFlatIconButton):
+    text = StringProperty()
+    icon = StringProperty()
+
+    def __init__(self, text, icon, skill, sc):
+        super(SkillButton, self).__init__()
+        self.text = text
+        self.icon = icon
+        self.skill = skill
+        self.sc = sc
+
+    def showinfo(self):
+        name = self.sc.APP.Lang["Profile"][self.skill]
+        self.sc.add_widget(ModalCase(name=name[0], text=name[1], id="info", sc=self.sc))
+
+class ModalCase(BoxLayout):
+    name = StringProperty()
+    text = StringProperty()
+    CloseButtonText = StringProperty()
+
+    def __init__(self, name, text, id, sc):
+        super(ModalCase, self).__init__()
+        self.name = name
+        self.text = text
+        self.sc = sc
+        self.CloseButtonText = sc.APP.Lang["Common"]["Close"]
+
+    def close_btn_touch_up(self):
+        self.sc.remove_widget(self)
+
+
+class SettingScreen(Screen):
+    Header = StringProperty()
+    CloseButtonText = StringProperty()
+    Theme = StringProperty()
+    LangName = StringProperty()
+
+    def __init__(self,name, APP):
+        super(SettingScreen, self).__init__(name= name)
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+
+    def show(self):
+        self.LangName = self.Settings["Lang"]
+        self.Theme = self.APP.Lang["Theme"][self.Settings["Theme"]]
+        self.Header = self.APP.Lang["Settings"]["Header"]
+        self.CloseButtonText = self.APP.Lang["Common"]["Save"]
+        self.manager.current = "SettingScreen"
+
+    def change_lang_btn_touch_up(self):
+        if self.LangName == "EN":
+            self.LangName = "RU"
+            self.Settings["Lang"] = "RU"
+        else:
+            self.LangName = "EN"
+            self.Settings["Lang"] = "EN"
+
+        self.APP.set_lang()
+
+
+    def change_theme_btn_touch_up(self):
+        if self.Settings["Theme"] == "Dark":
+            self.Theme = self.APP.Lang["Theme"]["Light"]
+            self.Settings["Theme"] = "Light"
+        else:
+            self.Theme = self.APP.Lang["Theme"]["Dark"]
+            self.Settings["Theme"] = "Dark"
+        print(self.Settings["Theme"])
+        self.APP.set_colors()
+
+
+    def close_btn_touch_up(self):
+        self.APP.save_settings()
+        PS = self.manager.get_screen("Profile")
+        PS.show()
+
+
 
 class RateScreen(Screen):
     Header = StringProperty("События ожидающие оценки")
     ButtonText = StringProperty("Закрыть")
 
-    def __init__(self,name,Logic,Settings, FC):
+    def __init__(self,name, APP):
         super(RateScreen, self).__init__(name= name)
-        self.Logic = Logic
-        self.Settings = Settings
-        self.FC = FC
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+        self.FC = APP.form_constructor
+
+    def show(self):
+        NR = self.Logic.get_needrate()
+        for i in NR.keys():
+            self.ids["ratebox"].add_widget(RateButton(text=NR[i], eventid=i, FC=self.FC, Lang=self.APP.Lang))
+            self.ids['ratebox'].height += 60
+        self.manager.current = "RateScreen"
 
     def close_btn_touch_up(self):
-        self.manager.current = "MainScreen"
         box = self.ids['ratebox']
         childs = [i for i in box.children]
         for i in childs:
             box.remove_widget(i)
         box.height = 0
+        MS = self.manager.get_screen("MainScreen")
+        MS.show()
+
 
 class RateButton(MDRaisedButton):
-    text = StringProperty("Закрыть")
+    text = StringProperty()
+    eventid = StringProperty()
+
+    def __init__(self,text, eventid, Lang, FC):
+        super(RateButton, self).__init__()
+        self.FC = FC
+        self.text = text
+        self.eventid = eventid
+        self.Lang = Lang
+
+    def rate_btn_touch_up(self, eventid):
+        self.FC(fn = "RateForm", result = "Rate", backscreen = "RateScreen", otherdata = self.eventid)
 
 
 class Reg(Screen):
     #Все тексты буду подгружаться из файла локализации
-    LabelText = StringProperty("Добро пожаловаь")
-    ButtonText = StringProperty("Зарегестрироваться")
+    LabelText = StringProperty()
+    ButtonText = StringProperty()
 
-    def __init__(self,name,Logic,Settings, FC):
+    def __init__(self,name,APP):
         super(Reg, self).__init__(name= name)
-        self.Logic = Logic
-        self.Settings = Settings
-        self.FC = FC
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+        self.FC = APP.form_constructor
+
+    def show(self):
+        self.LabelText = self.APP.Lang["Reg"]["Header"]
+        self.ButtonText = self.APP.Lang["Reg"]["Start"]
+        self.sm.current = "Reg"
 
     def reg_btn_touch_up(self):
-        self.FC("RegForm.json",result = "Skills")
+        self.FC("RegForm",result = "Skills")
 
 
+class TaskScreen(Screen):
+    TaskHeader = StringProperty()
+    CloseButton = StringProperty()
+
+    def __init__(self,name,APP):
+        super(TaskScreen, self).__init__(name= name)
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+    def newtask_btn_touch_up(self):
+        NTS = self.manager.get_screen("NewTaskScreen")
+        NTS.show()
+
+    def show(self):
+        self.TaskHeader = self.APP.Lang["TaskScreen"]["Header"]
+        self.CloseButton = self.APP.Lang["Common"]["Close"]
+        tasks = self.Logic.get_tasks()
+        for task in tasks.keys():
+            self.ids['taskbox'].add_widget(Task(task=task, Logic=self.Logic, sm=self.manager, Lang=self.APP.Lang))
+            self.ids['taskbox'].height += 60
+        self.manager.current = "TaskScreen"
+
+    def close_btn_touch_up(self):
+        box = self.ids['taskbox']
+        childs = [i for i in box.children]
+        for i in childs:
+            box.remove_widget(i)
+        box.height = 0
+        MS = self.manager.get_screen("MainScreen")
+        MS.show()
+
+class Task(BoxLayout):
+    name = StringProperty()
+    value = NumericProperty()
+    max = NumericProperty()
+    SubTaskButton = StringProperty()
+
+    def __init__(self,task, Logic, sm, Lang):
+        super(Task, self).__init__()
+        self.Logic = Logic
+        self.sm = sm
+        self.Lang = Lang
+        self.task = task
+        self.name = task.split()[0]
+        self.max, self.value = self.Logic.get_task_progress(task)
+        self.SubTaskButton = self.Lang["Common"]["Open"]
+        print(f"TASK: {self.value} {self.max}")
+        print(f"TASK: {self.ids['bar'].value} {self.ids['bar'].max}")
+
+    def subtask_btn_toch_up(self):
+        STS = self.sm.get_screen("SubTaskScreen")
+        STS.show(self.name, self.task)
+
+
+class NewTaskScreen(Screen):
+    Name = StringProperty()
+    AddButton = StringProperty()
+
+
+    def __init__(self,name,APP):
+        super(NewTaskScreen, self).__init__(name= name)
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+    def show(self):
+        self.Name = self.APP.Lang["NewTaskScreen"]["Name"]
+        self.CloseButton = self.APP.Lang["NewTaskScreen"]["Add"]
+        self.manager.current = "NewTaskScreen"
+
+    def newsubtask_btn_touch_up(self):
+        self.ids["newtaskbox"].height += 80
+        self.ids["newtaskbox"].add_widget(NewSubTask(Name = self.APP.Lang["Common"]["Name"]))
+
+    def close_btn_touch_up(self):
+        name = self.ids['name'].text
+        self.ids['name'].text = ""
+        subtasks = {}
+        box = self.ids['newtaskbox']
+        childs = [i for i in box.children]
+        for i in childs:
+            subtasks[i.ids["name"].text] = False
+            box.remove_widget(i)
+        box.height = 0
+        self.Logic.addTask(name, subtasks)
+        TS = self.manager.get_screen("TaskScreen")
+        TS.close_btn_touch_up()
+        TS.show()
+
+class NewSubTask(BoxLayout):
+    Name = StringProperty()
+
+class SubTaskScreen(Screen):
+    text = StringProperty()
+    task = StringProperty()
+    CloseButton = StringProperty()
+
+    def __init__(self,name, APP):
+        super(SubTaskScreen, self).__init__(name= name)
+        self.APP = APP
+        self.Logic = APP.Logic
+        self.Settings = APP.Settings
+
+    def show(self, name, task):
+        self.CloseButton = self.APP.Lang["Common"]["Close"]
+        self.text = name
+        self.task = task
+        task = self.Logic.get_task(task)
+        for subtask in task.keys():
+            print(task[subtask])
+            self.ids['subtaskbox'].add_widget(SubTask(text=subtask, checked=task[subtask]))
+            self.ids['subtaskbox'].height += 60
+        self.manager.current = "SubTaskScreen"
+
+    def close_btn_touch_up(self):
+        subtasks = {}
+        box = self.ids['subtaskbox']
+        childs = [i for i in box.children]
+        for i in reversed(childs):
+            subtasks[i.text] = i.ids["check"].ids["check"].active
+            box.remove_widget(i)
+        box.height = 0
+        print(subtasks)
+        self.Logic.set_task_progress(self.task, subtasks)
+        TS = self.manager.get_screen("TaskScreen")
+        TS.close_btn_touch_up()
+        MS = self.manager.get_screen("MainScreen")
+        MS.Task_btn_toch_up()
+
+
+class SubTask(BoxLayout):
+    text = StringProperty()
+    checked = BooleanProperty()
 
 class TestApp(MDApp):
 
-    L = Logic()
+    Logic = Logic()
+    BGC = StringProperty()
+    AC = StringProperty()
+    PBC = StringProperty()
+    SBC = StringProperty()
+    TC = StringProperty()
 
     def __init__(self):
         super(TestApp, self).__init__()
-        t1 = Thread(target=self.L.update_data, daemon=True)
+        t1 = Thread(target=self.Logic.update_data, daemon=True)
         t1.start()
         self.load_setting()
 
@@ -310,20 +615,46 @@ class TestApp(MDApp):
             with open("Settings.json", "r") as file:
                 self.Settings = json.load(file)
             file.close()
+            self.set_lang()
+            self.set_colors()
             return True
         except Exception as e:
             print(e)
             return False
 
-    def form_constructor(self,fn,result):
+    def save_settings(self):
+        with open("Settings.json", "w") as file:
+            json.dump(self.Settings,file)
+        file.close()
+
+    def set_lang(self):
+        print(self.Settings["Lang"])
+        with open(self.Settings["Lang"] + ".json", "r") as file:
+            self.Lang = json.load(file)
+        file.close()
+
+    def set_colors(self):
+        if self.Settings["Theme"] == "Dark":
+            self.Colors = self.Settings["DColors"]
+        else:
+            self.Colors = self.Settings["LColors"]
+        self.BGC = self.Colors["BGC"]
+        self.AC = self.Colors["AC"]
+        self.PBC = self.Colors["PBC"]
+        self.SBC = self.Colors["SBC"]
+        self.TC = self.Colors["TC"]
+
+    def form_constructor(self,fn,result, backscreen = "MainScreen", otherdata = None):
         F = self.sm.get_screen("Form")
         F.ResultPath = result
+        F.otherdata = otherdata
+        F.BackScreen = backscreen
         try:
-            with open(fn, "r") as file:
+            with open(fn+f"{self.Settings['Lang']}.json", "r") as file:
                 data = json.load(file)["form"]
             for i, line in enumerate(data):
                 if line[0] == "S":
-                    F.ids["questionsbox"].add_widget(SimpleQuestion(text=line[1], group=f"{line[1]}"))
+                    F.ids["questionsbox"].add_widget(SimpleQuestion(text=line[1], group=f"{line[1]}", Yes = self.Lang["Common"]["Yes"], No = self.Lang["Common"]["No"]))
                 else:
                     F.ids["questionsbox"].add_widget(RateQuestion(text=line[1], LL=line[2], RL=line[3]))
                 print(F.ids["questionsbox"].children[0].text)
@@ -333,18 +664,21 @@ class TestApp(MDApp):
             self.sm.current = "Form"
         except Exception as e:
             print(e)
-            self.sm.current = "MainScreen"
 
 
 
     def build(self):
-        self.MS = MainScreen(name="MainScreen", Logic=self.L,Settings=self.Settings)
-        self.DS = Day(name="Day", Logic=self.L,Settings=self.Settings)
-        self.ES = NEWEVENT(name="NEWEVENT", Logic=self.L,Settings=self.Settings)
-        self.F = Form(name = "Form", Logic=self.L,Settings=self.Settings)
-        self.P = Profile(name="Profile", Logic=self.L,Settings=self.Settings)
-        self.R = Reg(name="Reg", Logic=self.L,Settings=self.Settings, FC = self.form_constructor)
-        self.RS = RateScreen(name="RateScreen", Logic=self.L, Settings=self.Settings, FC=self.form_constructor)
+        self.MS = MainScreen(name="MainScreen", APP = self)
+        self.DS = Day(name="Day", APP = self)
+        self.ES = NEWEVENT(name="NEWEVENT", APP = self)
+        self.F = Form(name = "Form", APP = self)
+        self.P = Profile(name="Profile", APP = self)
+        self.R = Reg(name="Reg", APP = self)
+        self.RS = RateScreen(name="RateScreen", APP = self)
+        self.TS = TaskScreen(name="TaskScreen", APP = self)
+        self.NTS = NewTaskScreen(name="NewTaskScreen", APP = self)
+        self.STS = SubTaskScreen(name="SubTaskScreen", APP = self)
+        self.SS = SettingScreen(name="SettingScreen", APP=self)
 
         self.sm = ScreenManager()
 
@@ -355,9 +689,16 @@ class TestApp(MDApp):
         self.sm.add_widget(self.P)
         self.sm.add_widget(self.R)
         self.sm.add_widget(self.RS)
+        self.sm.add_widget(self.TS)
+        self.sm.add_widget(self.NTS)
+        self.sm.add_widget(self.STS)
+        self.sm.add_widget(self.SS)
 
-        if not(self.L.loadprofile()):
-            self.sm.current = "Reg"
+        if not(self.Logic.loaded):
+            self.R.show()
+        else:
+            self.MS.show()
+
 
         return self.sm
 

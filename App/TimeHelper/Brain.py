@@ -87,27 +87,30 @@ class Agent:
                               cost = 0
                               )
             self.bank.add_exp(newexp)
-            return (action, newexp.id)
+            self.bank.save()
+            return (action, newexp)
         action = np.argmax(self.q_network.predict(self.normal(state))[0])
         newexp = expline(key=self.key,
                           data=state,
                           action=action,
-                          priority=expline.priority,
+                          priority=exp.priority,
                           cost=0
                           )
-        self.Bank.add_exp(newexp)
-        expline.priority += 0.05
-        return (action, newexp.id)
+        exp.priority += 0.05
+        return (action, newexp)
 
 
     def retrain(self,expid, user_reward):
+        print(f"key: {self.key}")
         exp = self.bank.get(self.key,expid)
-        key, state, action, priority, reward = exp.tuple()
-        print(state)
-        target = self.q_network.predict(self.normal(state))
-        print("########TARGET############")
-        print(target)
-        target[0][action] = reward + user_reward*0.1
-        self.q_network.fit(state, target, epochs=1, verbose=0)
-        exp.priority += np.abs(user_reward - reward)
+        if exp != None:
+            key, state, action, priority, reward = exp.tuple()
+            state = self.normal(state)
+            target = self.q_network.predict(state)
+            print("########TARGET############")
+            print(target)
+            target[0][action] = reward + user_reward*0.1
+            self.q_network.fit(state, target, epochs=1, verbose=0)
+            exp.priority += np.abs(user_reward - reward)
+            self.bank.save()
 

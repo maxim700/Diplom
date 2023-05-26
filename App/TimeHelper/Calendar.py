@@ -1,6 +1,7 @@
 import Event
 import TAGS
 import dates
+import json
 class calendar:
 
     def __init__(self):
@@ -48,38 +49,39 @@ class calendar:
             self.remove_event(date,time,name)
 
     def save(self):
-        file = open("calendare.txt", 'w')
+        savedata = {}
         for i, date in enumerate(self.dates):
+            savedata[date] = {}
             for time in self.dates[date]:
+                savedata[date][time] = {}
                 for event in self.dates[date][time]:
-                    s = f"{date},{time}"
-                    for d in self.dates[date][time][event].descripton:
-                        print(d)
-                        s += f",{d}:{self.dates[date][time][event].descripton[d]}"
-                    s += "\n"
-                    print(s)
-                    file.write(s)
+                    savedata[date][time][event]= self.dates[date][time][event].descripton
+
+        with open("calendare.json", "w") as file:
+            json.dump(savedata, file)
         file.close()
 
     def load(self):
-        file = open("calendare.txt", 'r')
-        while True:
-            line = file.readline().split(',')
-            print(f"READ {line}")
-            if len(line)<3:
-                break
-            if not(line[0] in self.dates.keys()):
-                self.dates[line[0]] = dict()#дата
-            if not (line[1] in self.dates[line[0]].keys()):
-                self.dates[line[0]][line[1]] = dict()  # Время
-            d = dict()
-            for item in line[2:]:
-                s = item.split(':')
-                d[s[0]] = s[1]
-            e = Event.event(line[0],line[1],d)
-            self.dates[line[0]][line[1]][line[2]] = e
-        file.close()
-        self.sort()
+        loaddata = None
+        try:
+            with open("calendare.json", "r") as file:
+                loaddata = json.load(file)
+            file.close()
+
+            for date in loaddata:
+                self.dates[date] = {}
+                for time in loaddata[date]:
+                    self.dates[date][time] = {}
+                    for event in loaddata[date][time]:
+                        e = Event.event(date,time,loaddata[date][time][event])
+                        self.dates[date][time][event] = e
+
+            self.sort()
+
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def sort(self):
         for date in self.dates:

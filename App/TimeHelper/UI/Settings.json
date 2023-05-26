@@ -1,16 +1,1 @@
-{
-  "icons": {
-    "people": "account-group",
-    "noize": "party-popper",
-    "job": "briefcase",
-    "sleep": "sleep",
-    "activ": "run",
-    "road": "road-variant",
-    "multiwork": "file-tree",
-    "stress": "flash-alert",
-    "responsibility": "shield-alert",
-    "plan": "map-check",
-    "motivation": "star-shooting",
-    "hobby": "palette"
-  }
-}
+{"icons": {"people": "account-group", "noize": "party-popper", "job": "briefcase", "sleep": "sleep", "activ": "run", "road": "road-variant", "multiwork": "file-tree", "stress": "flash-alert", "responsibility": "shield-alert", "plan": "map-check", "motivation": "star-shooting", "hobby": "palette"}, "Lang": "RU", "Theme": "Dark", "LColors": {"BGC": "#d3e5d2", "AC": "#558b6d", "PBC": "#5aa079", "SBC": "#c5e2c8", "TC": "#0b1a0a"}, "DColors": {"BGC": "#272b27", "AC": "#054220", "PBC": "#122b1e", "SBC": "#173526", "TC": "#acbfab"}}
