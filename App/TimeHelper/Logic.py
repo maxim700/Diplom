@@ -26,6 +26,7 @@ class Logic():
         self.expbufer = None
         self.needrate = {}
         self.Tasks = {}
+        self.TaskHistory = {}
         self.load_NR()
         self.load_tasks()
 
@@ -35,6 +36,16 @@ class Logic():
             self.C.load()
         except:
             self.C.save()
+
+        try:
+            self.load_tasks()
+        except:
+            self.save_tasks()
+
+        try:
+            self.load_task_hist()
+        except:
+            self.save_task_hist()
 
     def loadprofile(self):
         return self.prof.load()
@@ -166,8 +177,43 @@ class Logic():
     def set_task_progress(self, id, subtasks):
         self.Tasks[id] = subtasks
         self.save_tasks()
+        for i in subtasks.keys():
+            if subtasks[i] == False:
+                return False
+        self.TaskHistory[id] = dt.datetime.today().strftime('%d.%m.%Y')
+        self.save_task_hist()
+        return True
 
-        # Что хоти видеть в профиле? - skills mbti name
+    def save_task_hist(self):
+        with open("TaskHist.json", "w") as file:
+            json.dump(self.TaskHistory, file)
+        file.close()
+
+    def load_task_hist(self):
+        try:
+            with open("TaskHist.json", "r") as file:
+                self.TaskHistory = json.load(file)
+            file.close()
+        except Exception as e:
+            print(e)
+
+    def get_task_stat(self):
+        full = 0
+        part = 0
+        null = 0
+        for task in self.Tasks.keys():
+            if task in self.TaskHistory.keys():
+                full += 1
+            else:
+                null += 1
+                for st in self.Tasks[task].keys():
+                    if self.Tasks[task][st]:
+                        part += 1
+                        null -= 1
+                        break
+        return [full, part, null]
+
+# Что хоти видеть в профиле? - skills mbti name
 # Нужны ли настройки? Какие? цвета
 # На что завизать опросы - кнопочка оценка рекомендаций
 # Функция хэша нормальная?
@@ -202,3 +248,14 @@ class Logic():
 # 02.06 5:30
 #
 # 26.05 23:00
+
+
+
+#постановка задачи
+# Актуальность
+# Статистика
+# +- аналогов
+# новизна
+# реализация
+# кросплтаформенность
+# руководство пользователя

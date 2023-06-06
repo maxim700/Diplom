@@ -21,7 +21,8 @@
     "Ok": "OK",
     "Yes": "Yes",
     "No": "No",
-    "Name": "Enter a name:"
+    "Name": "Enter a name:",
+    "Void": "There's nothing here yet"
 
   },
   "Theme": {
@@ -38,13 +39,21 @@
   "NewEvent": {
     "Name": "Enter event name:",
     "Tags": "Select appropriate tags:",
-    "Time": "Time",
+    "TimeS": "Start",
+    "TimeF": "Finish",
     "Date": "Date",
     "TagName": {
       "Friends": "Friends",
       "Road": "Road",
       "Activ": "Activity",
-      "Relax": "Rest"
+      "Relax": "Rest",
+      "Shopping": "Shopping",
+      "Natural": "Natural",
+      "Extreem": "Extreem",
+      "Work": "Job",
+      "Studing": "Studing",
+      "Party": "Party",
+      "Sleep": "Sleep"
     }
   },
   "Reg": {
@@ -52,7 +61,8 @@
     "Start": "Register"
   },
   "TaskScreen": {
-    "Header": "Your tasks"
+    "Header": "Your tasks",
+    "Stat": [ "Achieved goals", "Partially achieved goals", "Not achieved goals" ]
   },
   "NewTaskScreen": {
     "Name": "Enter the name of the task",

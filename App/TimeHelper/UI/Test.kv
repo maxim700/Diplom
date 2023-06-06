@@ -19,6 +19,7 @@
         MDTopAppBar:
             orientation: "horizontal"
             title: root.AppName
+            font_size: app.font_size
             specific_text_color:  get_color_from_hex(app.TC)
             anchor_title: "left"
             md_bg_color: get_color_from_hex(app.AC)
@@ -60,11 +61,12 @@
             DayButton:
                 text: "Button4"
                 id: day3
+                md_bg_color: get_color_from_hex(app.PBC)
                 on_release:
                     root.day_btn_touch_up("day3")
 
             DayButton:
-                text: "Button5"
+                    text: "Button5"
                 id: day4
                 on_release:
                     root.day_btn_touch_up("day4")
@@ -108,7 +110,7 @@
 
             MDFloatingActionButton:
                 size_hint_x: .20
-                icon: "star"
+                icon: "thumb-up"
                 md_bg_color: get_color_from_hex(app.PBC)
                 icon_color: get_color_from_hex(app.TC)
                 pos_hint: {"center_x": .9, "center_y": .5}
@@ -127,6 +129,7 @@
 
 <DayButton>
     text_color: get_color_from_hex(app.TC)
+    font_size: app.font_size
     halign: 'left'
     valign: 'center'
     md_bg_color: get_color_from_hex(app.SBC)
@@ -149,6 +152,22 @@
                 size: self.size
                 pos: self.pos
 
+        Label:
+            id: L1
+            text: ""
+            font_size: app.font_size
+            color: get_color_from_hex(app.TC)
+            text_size: self.size
+            halign: 'left'
+            valign: 'center'
+            size_hint_y: .1
+            canvas.before:
+                Color:
+                    rgba: get_color_from_hex(app.OC1)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
@@ -162,14 +181,6 @@
                 height: 0
                 size_hint_x: 1
 
-                Label:
-                    id: L1
-                    text: ""
-                    color: get_color_from_hex(app.TC)
-                    text_size: self.size
-                    halign: 'left'
-                    valign: 'center'
-                    size_hint_y: .1
 
                 BoxLayout:
                     id: box
@@ -186,7 +197,7 @@
             size_hint_y: .1
 
             MDRectangleFlatButton:
-                text: 'Close'
+                text: root.CloseButton
                 text_color: get_color_from_hex(app.TC)
                 md_bg_color: get_color_from_hex(app.PBC)
                 on_release:
@@ -201,32 +212,43 @@
         anchor_y:'top'
         orientation: "vertical"
 
+
         Label:
             id: L1
             text: ""
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             text_size: self.size
             halign: 'left'
             valign: 'center'
+            size_hint_y: .2
+            canvas.before:
+                Color:
+                    rgba: get_color_from_hex(app.OC1)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
 
 
         GridLayout:
             id: tagbox
             padding: dp(5), dp(5)
-            spacing: dp(10)
+            spacing: dp(5)
             anchor_y:'top'
             cols: 3
             orientation: "lr-tb"
             col_force_default: True
-            col_default_width: '70dp'
+            col_default_width: '90dp'
             row_force_default: True
-            row_default_height: '25dp'
+            row_default_height: '35dp'
+            height: 0
+
 
 <TAG>:
-    text: ""
+    text: root.TagText
     color: get_color_from_hex(app.TC)
     size_hint: None, None
-    size: 70, 25
+    size: 90, 30
     anchor_y:'top'
     anchor_x:'left'
     canvas.before:
@@ -251,8 +273,6 @@
                 size: self.size
                 pos: self.pos
 
-
-
         BoxLayout:
             size_hint_y: .10
             orientation: "vertical"
@@ -260,6 +280,7 @@
 
             Label:
                 text: root.Name
+                font_size: app.font_size
                 color: get_color_from_hex(app.TC)
                 text_size: self.size
                 halign: 'left'
@@ -268,20 +289,22 @@
             TextInput:
                 id: name
                 multiline: False
+                font_size: app.font_size
                 text_size: self.size
-                cursor_color: get_color_from_hex(app.AC)
-                foreground_color: get_color_from_hex(app.BGC)
+                cursor_color: get_color_from_hex(app.TC)
+                foreground_color: get_color_from_hex(app.TC)
                 size_hint_y: None
                 height: sp(32)
-                background_color: get_color_from_hex(app.TC)
+                background_color: get_color_from_hex(app.BGC)
 
 
         BoxLayout:
             orientation: "vertical"
             spacing: dp(5)
-            size_hint_y: 0.40
+            size_hint_y: 0.50
             Label:
                 text: root.Tags
+                font_size: app.font_size
                 text_size: self.size
                 color: get_color_from_hex(app.TC)
                 halign: 'left'
@@ -298,23 +321,42 @@
             orientation: "vertical"
             spacing: dp(5)
             padding: dp(5)
-            size_hint_y: .20
+            size_hint_y: .2
 
-            MDRectangleFlatButton:
-                text: root.Time
-                id: time
-                text_color: get_color_from_hex(app.TC)
-                md_bg_color: get_color_from_hex(app.BGC)
+            BoxLayout:
                 size_hint_y: .45
                 size_hint_x: .30
-                on_release:
-                    root.set_time()
+                MDRectangleFlatButton:
+                    text: root.TimeS
+                    font_size: app.font_size
+                    id: times
+                    text_color: get_color_from_hex(app.TC)
+                    md_bg_color: get_color_from_hex(app.PBC)
+                    size_hint_y: 1
+                    size_hint_x: .45
+                    on_release:
+                        root.set_time(True)
+                Widget:
+                    size_hint_y: 1
+                    size_hint_x: .1
+
+                MDRectangleFlatButton:
+                    text: root.TimeF
+                    font_size: app.font_size
+                    id: timef
+                    text_color: get_color_from_hex(app.TC)
+                    md_bg_color: get_color_from_hex(app.PBC)
+                    size_hint_y: 1
+                    size_hint_x: .45
+                    on_release:
+                        root.set_time(False)
 
             BoxLayout:
                 size_hint_y: .45
                 size_hint_x: 1
                 MDRectangleFlatButton:
                     text: root.Date
+                    font_size: app.font_size
                     id: date
                     text_color: get_color_from_hex(app.TC)
                     md_bg_color: get_color_from_hex(app.PBC)
@@ -332,11 +374,12 @@
                     md_bg_color: get_color_from_hex(app.PBC)
                     icon_color: get_color_from_hex(app.TC)
                     pos_hint: {"center_x": .9, "center_y": .5}
+                    elevation: 0
                     on_release:
                         root.rec_btn_touch_up()
 
         BoxLayout:
-            size_hint_y: .30
+            size_hint_y: .10
 
         BoxLayout:
             orientation: "horizontal"
@@ -344,6 +387,7 @@
 
             MDRectangleFlatButton:
                 text: root.CloseButton
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 md_bg_color: get_color_from_hex(app.PBC)
                 on_release:
@@ -351,6 +395,7 @@
             BoxLayout:
             MDRectangleFlatButton:
                 text: root.OkButton
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 md_bg_color: get_color_from_hex(app.PBC)
                 on_release:
@@ -367,12 +412,15 @@
         size: "48dp", "48dp"
         pos_hint: {"center_y": .5}
         active: root.checked
+        size_hint_x: .2
 
     MDLabel:
         text: root.text
+        font_size: app.font_size
         adaptive_height: True
         color: get_color_from_hex(app.TC)
         pos_hint: {"center_y": .5}
+        size_hint_x: .8
 
 <GCheckItem>
     adaptive_height: True
@@ -385,12 +433,15 @@
         color_active: get_color_from_hex(app.AC)
         size: "48dp", "48dp"
         active: root.checked
+        size_hint_x: .2
 
     MDLabel:
         text: root.text
+        font_size: app.font_size
         adaptive_height: True
         color: get_color_from_hex(app.TC)
         pos_hint: {"center_y": .5}
+        size_hint_x: .8
 
 
 <Form>
@@ -423,6 +474,7 @@
 
             MDRaisedButton:
                 text: root.ButtonText
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -442,10 +494,17 @@
 
     MDLabel:
         text: root.text
+        font_size: app.font_size
         color: get_color_from_hex(app.TC)
         halign: 'left'
         valign: 'center'
         size_hint_y: 0.4
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex(app.OC1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
 
     BoxLayout:
         orientation: "horizontal"
@@ -464,16 +523,24 @@
 
     MDLabel:
         text: root.text
+        font_size: app.font_size
         color: get_color_from_hex(app.TC)
         halign: 'left'
         valign: 'center'
         size_hint_y: 0.4
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex(app.OC1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
 
     BoxLayout:
         orientation: "horizontal"
 
         MDLabel:
             text: root.LL
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'right'
             valign: 'center'
@@ -495,6 +562,7 @@
 
         MDLabel:
             text: root.RL
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -518,6 +586,7 @@
 
         MDLabel:
             text: root.LabelText
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'center'
             valign: 'center'
@@ -525,6 +594,7 @@
 
         MDRaisedButton:
             text: root.ButtonText
+            font_size: app.font_size
             text_color: get_color_from_hex(app.TC)
             halign: 'center'
             valign: 'center'
@@ -534,6 +604,24 @@
             size_hint_y: .1
             on_release:
                 root.reg_btn_touch_up()
+
+
+<DateDialog>
+    primary_color: get_color_from_hex(app.PBC)
+    accent_color: get_color_from_hex(app.AC)
+    selector_color: get_color_from_hex(app.SBC)
+    text_toolbar_color: get_color_from_hex(app.TC)
+    text_color: get_color_from_hex(app.TC)
+    text_current_color: get_color_from_hex(app.TC)
+    text_button_color: get_color_from_hex(app.TC)
+    font_size: app.font_size
+
+<TimeDialog>
+    primary_color: get_color_from_hex(app.BGC)
+    accent_color: get_color_from_hex(app.AC)
+    text_button_color: get_color_from_hex(app.TC)
+    text_toolbar_color: get_color_from_hex(app.TC)
+    font_size: app.font_size
 
 
 <Profile>
@@ -552,6 +640,7 @@
             size_hint_y: 0.2
             MDLabel:
                 text: root.ProfileHead
+                font_size: app.font_size
                 color: get_color_from_hex(app.TC)
                 halign: 'left'
                 valign: 'center'
@@ -581,7 +670,7 @@
                 height: 0
 
         BoxLayout:
-
+            size_hint_y: 0.2
 
         BoxLayout:
             padding: dp(5), dp(5)
@@ -590,6 +679,7 @@
             size_hint_y: 0.1
             MDRaisedButton:
                 text: root.ButtonText
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -612,6 +702,7 @@
     pos_hint: {'center_x': .5}
     size_hint_x: .98
     size_hint_y: .2
+    font_size: app.font_size
     on_release:
         root.showinfo()
 
@@ -625,13 +716,15 @@
     orientation: "vertical"
     canvas.before:
         Color:
-            rgba: get_color_from_hex(app.SBC)
-        Rectangle:
+            rgba: get_color_from_hex(app.OC1)
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [10,]
 
     MDLabel:
         text: root.name
+        font_size: app.font_size
         color: get_color_from_hex(app.TC)
         halign: 'center'
         valign: 'center'
@@ -639,6 +732,7 @@
 
     MDLabel:
         text: root.text
+        font_size: app.font_size
         color: get_color_from_hex(app.TC)
         halign: 'center'
         valign: 'center'
@@ -646,6 +740,7 @@
 
     MDRaisedButton:
         text: root.CloseButtonText
+        font_size: app.font_size
         text_color: get_color_from_hex(app.TC)
         halign: 'center'
         valign: 'center'
@@ -670,6 +765,7 @@
                 pos: self.pos
         MDLabel:
             text: root.Header
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -692,6 +788,7 @@
             size_hint_y: 0.1
             MDRaisedButton:
                 text: root.ButtonText
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -704,6 +801,7 @@
 
 <RateButton>
     text: root.text
+    font_size: app.font_size
     text_color: get_color_from_hex(app.TC)
     halign: 'left'
     valign: 'center'
@@ -727,7 +825,9 @@
                 size: self.size
                 pos: self.pos
         MDLabel:
+            font_size: app.font_size
             text: root.TaskHeader
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -745,6 +845,7 @@
                 height: 0
 
         BoxLayout:
+            size_hint_y: 0.1
 
         BoxLayout:
             padding: dp(5), dp(5)
@@ -767,9 +868,18 @@
         icon: "plus"
         md_bg_color: get_color_from_hex(app.PBC)
         icon_color: get_color_from_hex(app.TC)
-        pos_hint: {"center_x": .85, "center_y": .15}
+        pos_hint: {"center_x": .90, "center_y": .15}
         on_release:
             root.newtask_btn_touch_up()
+
+    MDFloatingActionButton:
+        width: self.height
+        icon: "chart-line"
+        md_bg_color: get_color_from_hex(app.PBC)
+        icon_color: get_color_from_hex(app.TC)
+        pos_hint: {"center_x": .10, "center_y": .15}
+        on_release:
+            root.stat_btn_touch_up()
 
 <Task>:
     orientation: "horizontal"
@@ -787,31 +897,39 @@
         orientation: "vertical"
         MDLabel:
             text: root.name
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
-            size_hint_y: 0.8
+            size_hint_y: 0.6
 
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: 0.4
+            spacing: dp(5)
 
-        MDProgressBar:
-            id: bar
-            color: get_color_from_hex(app.AC)
-            back_color: get_color_from_hex(app.TC)
-            size_hint_y: 0.2
-            radius: [0, 0, 0, 0]
-            min:0
-            max:root.max
-            value: root.value
+            MDProgressBar:
+                id: bar
+                color: get_color_from_hex(app.AC)
+                back_color: get_color_from_hex(app.OC1)
+                size_hint_y: .5
+                pos_hint: {'center_y': .5}
+                radius: [0, 0, 0, 0]
+                min:0
+                max:root.max
+                value: root.value
 
-    MDFillRoundFlatButton:
-        text: root.SubTaskButton
-        text_color: get_color_from_hex(app.TC)
-        halign: 'center'
-        valign: 'center'
-        md_bg_color: get_color_from_hex(app.PBC)
-        pos_hint: {'center_x': .5, 'center_y': .5}
-        size_hint_x: .2
-        size_hint_y: .8
-        on_release:
-            root.subtask_btn_toch_up()
+            MDFillRoundFlatButton:
+                text: root.SubTaskButton
+                font_size: app.font_size
+                text_color: get_color_from_hex(app.TC)
+                halign: 'center'
+                valign: 'center'
+                md_bg_color: get_color_from_hex(app.PBC)
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                size_hint_x: .2
+                size_hint_y: 1
+                pos_hint: {'center_y': .5}
+                on_release:
+                    root.subtask_btn_toch_up()
 
 
 <NewTaskScreen>:
@@ -827,6 +945,7 @@
                 pos: self.pos
         MDLabel:
             text: root.Name
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -834,12 +953,12 @@
         TextInput:
             id: name
             multiline: False
+            font_size: app.font_size
             text_size: self.size
             cursor_color: get_color_from_hex(app.AC)
             foreground_color: get_color_from_hex(app.TC)
-            size_hint_y: 0.08
+            size_hint_y: 0.15
             size_hint_x: 0.6
-            height: sp(32)
             background_color: get_color_from_hex(app.SBC)
         ScrollView:
             do_scroll_x: False
@@ -863,6 +982,7 @@
             size_hint_y: 0.1
             MDRaisedButton:
                 text: root.AddButton
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -897,6 +1017,7 @@
         orientation: "vertical"
         MDLabel:
             text: root.Name
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             size_hint_y: 0.4
 
@@ -905,10 +1026,10 @@
             id: name
             multiline: False
             size_hint_y: 0.6
+            font_size: app.font_size
             text_size: self.size
             cursor_color: get_color_from_hex(app.AC)
             foreground_color: get_color_from_hex(app.TC)
-            height: sp(32)
             background_color: get_color_from_hex(app.SBC)
 
 
@@ -925,6 +1046,7 @@
                 pos: self.pos
         MDLabel:
             text: root.text
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -950,6 +1072,7 @@
             size_hint_y: 0.1
             MDRaisedButton:
                 text: root.CloseButton
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -991,6 +1114,7 @@
                 pos: self.pos
         MDLabel:
             text: root.Header
+            font_size: app.font_size
             color: get_color_from_hex(app.TC)
             halign: 'left'
             valign: 'center'
@@ -1010,6 +1134,7 @@
 
                 MDRaisedButton:
                     text: root.LangName
+                    font_size: app.font_size
                     text_color: get_color_from_hex(app.TC)
                     halign: 'center'
                     valign: 'center'
@@ -1021,6 +1146,7 @@
 
                 MDRaisedButton:
                     text: root.Theme
+                    font_size: app.font_size
                     text_color: get_color_from_hex(app.TC)
                     halign: 'center'
                     valign: 'center'
@@ -1039,6 +1165,7 @@
             size_hint_y: 0.1
             MDRaisedButton:
                 text: root.CloseButtonText
+                font_size: app.font_size
                 text_color: get_color_from_hex(app.TC)
                 halign: 'center'
                 valign: 'center'
@@ -1047,3 +1174,51 @@
                 size_hint_x: .98
                 on_release:
                     root.close_btn_touch_up()
+
+
+<StatScreen>
+    BoxLayout:
+        padding: dp(5), dp(5)
+        spacing: dp(5)
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex(app.BGC)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        MDLabel:
+            text: root.Header
+            id:testlb
+            font_size: app.font_size
+            color: get_color_from_hex(app.TC)
+            halign: 'left'
+            valign: 'center'
+            size_hint_y: 0.1
+
+        BoxLayout:
+            id:graph
+
+        BoxLayout:
+            padding: dp(5), dp(5)
+            spacing: dp(5)
+            orientation: "horizontal"
+            size_hint_y: 0.1
+            MDRaisedButton:
+                text: root.CloseButton
+                font_size: app.font_size
+                text_color: get_color_from_hex(app.TC)
+                halign: 'center'
+                valign: 'center'
+                md_bg_color: get_color_from_hex(app.PBC)
+                pos_hint: {'center_x': .5}
+                size_hint_x: .98
+                on_release:
+                    root.close_btn_touch_up()
+
+<FloatLabel>:
+    pos_hint: {'center_x': .5, 'center_x': .5}
+    font_size: app.font_size
+    text: root.LabelText
+    id:FL
+    color: get_color_from_hex(app.TC)
