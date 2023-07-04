@@ -7,15 +7,15 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRectangleFlatButton, MDRaisedButton, MDRectangleFlatIconButton, MDFillRoundFlatIconButton
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
+from kivy.uix.image import Image
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty
 from kivymd.uix.pickers.timepicker.timepicker import MDTimePicker
 from kivymd.uix.pickers.datepicker.datepicker import MDDatePicker
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('TkAgg', force=True)
+import os
+
 
 from Logic import *
 from dates import days
@@ -192,7 +192,7 @@ class Day(Screen):
             self.remove_widget(self.ids["FL"])
         MS = self.manager.get_screen("MainScreen")
         MS.show()
-        self.ids['eslayout'].height = 0
+        self.ids['eslayout'].height = 20
 
 
 
@@ -266,6 +266,7 @@ class NEWEVENT(Screen):
         print(event)
         date = self.Logic.recomendation(event)
         self.ids["date"].text = date.strftime('%d.%m.%Y')
+        self.add_widget(ModalCase(name=self.APP.Lang["Common"]["Rec"], text=date.strftime('%d.%m.%Y'), id="info", sc=self))
 
     def close_btn_touch_up(self):
         box = self.ids['tagbox']
@@ -420,6 +421,7 @@ class SettingScreen(Screen):
     def close_btn_touch_up(self):
         self.APP.save_settings()
         PS = self.manager.get_screen("Profile")
+        PS.close_btn_touch_up()
         PS.show()
 
 
@@ -503,16 +505,20 @@ class StatScreen(Screen):
         self.Settings = APP.Settings
 
     def show(self):
-        self.Header = self.APP.Lang["Common"]["Close"]
+        self.Header = self.APP.Lang["StatScreen"]["Header"]
         self.CloseButton = self.APP.Lang["Common"]["Close"]
 
         stat = self.Logic.get_task_stat()
-
-        plt.rcParams.update({'font.size': 22})
-
-        plt.pie(stat, labels= self.APP.Lang["TaskScreen"]["Stat"] )
-        # MatplotFigure (Kivy widget)
-        self.ids["graph"].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        print(stat)
+        if sum(stat) != 0:
+            plt.pie(stat, labels= self.APP.Lang["TaskScreen"]["Stat"])
+            plt.savefig("stat.png")
+            # MatplotFigure (Kivy widget)
+            #self.ids["graph"].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+            self.ids["graph"].add_widget(Image(source='stat.png'))
+            os.remove('stat.png')
+        else:
+            self.add_widget(FloatLabel(LabelText=self.APP.Lang["Common"]["Void"]))
         self.manager.current = "StatScreen"
 
     def close_btn_touch_up(self):
@@ -561,6 +567,7 @@ class TaskScreen(Screen):
         for i in childs:
             box.remove_widget(i)
         box.height = 0
+        print(self.children)
         if "FL" in self.ids.keys():
             self.remove_widget(self.ids["FL"])
         MS = self.manager.get_screen("MainScreen")
@@ -706,10 +713,15 @@ class TestApp(MDApp):
         file.close()
 
     def set_lang(self):
-        print(self.Settings["Lang"])
-        with open(self.Settings["Lang"] + ".json", "r") as file:
-            self.Lang = json.load(file)
-        file.close()
+        try:
+            print(self.Settings["Lang"])
+            with open(self.Settings["Lang"] + ".json", "r") as file:
+                self.Lang = json.load(file)
+            file.close()
+        except:
+            with open("EN.json", "r") as file:
+                self.Lang = json.load(file)
+            file.close()
 
     def set_colors(self):
         if self.Settings["Theme"] == "Dark":
@@ -784,5 +796,3 @@ class TestApp(MDApp):
         return self.sm
 
 
-#todo Косяк с файлом сейва, поправить при билде
-TestApp().run()

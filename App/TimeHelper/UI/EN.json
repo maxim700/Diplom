@@ -22,7 +22,8 @@
     "Yes": "Yes",
     "No": "No",
     "Name": "Enter a name:",
-    "Void": "There's nothing here yet"
+    "Void": "There's nothing here yet",
+    "Rec": "Recommended date of the event:"
 
   },
   "Theme": {
@@ -49,7 +50,7 @@
       "Relax": "Rest",
       "Shopping": "Shopping",
       "Natural": "Natural",
-      "Extreem": "Extreem",
+      "Extreem": "Sport",
       "Work": "Job",
       "Studing": "Studing",
       "Party": "Party",
@@ -67,6 +68,9 @@
   "NewTaskScreen": {
     "Name": "Enter the name of the task",
     "Add": "Add"
+  },
+  "StatScreen": {
+    "Header": "Statistics"
   }
 
 

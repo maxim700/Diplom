@@ -128,7 +128,7 @@
 
 
 <DayButton>
-    text_color: get_color_from_hex(app.TC)
+	text_color: get_color_from_hex(app.TC)
     font_size: app.font_size
     halign: 'left'
     valign: 'center'
@@ -178,7 +178,7 @@
                 spacing: dp(5)
                 anchor_y:'top'
                 orientation: "vertical"
-                height: 0
+                height: 20
                 size_hint_x: 1
 
 
@@ -221,7 +221,7 @@
             text_size: self.size
             halign: 'left'
             valign: 'center'
-            size_hint_y: .2
+            size_hint_y: .4
             canvas.before:
                 Color:
                     rgba: get_color_from_hex(app.OC1)

@@ -1,4 +1,8 @@
-from UI/Test.py import  TestApp
+from Test import TestApp
 
 if __name__ == '__main__':
-    TestApp().run()
+    App = TestApp()
+    App.run()
+
+
+

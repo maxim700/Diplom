@@ -1,6 +1,5 @@
 from socket import *
 import json
-from time import sleep
 
 class subserver:
     def __init__(self):
